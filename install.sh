@@ -24,7 +24,9 @@ if [[ -e /etc/init/synergy.conf ]] ; then
 fi
 
 # Create a symbolic link
-sudo ln -s `pwd`/synergy.conf /etc/init/synergy.conf
+# sudo ln -s `pwd`/synergy.conf /etc/init/synergy.conf
+# Actually... just copy it because that's how I set up other PC's with split /home and / partitions
+sudo cp synergy.conf /etc/init/synergy.conf
 
 # Reload upstart configuration, so it knows about the services we added
 sudo initctl reload-configuration
