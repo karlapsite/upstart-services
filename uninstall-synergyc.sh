@@ -1,7 +1,7 @@
 #!/bin/bash
 BIN="synergyc"
 TMP="/tmp/$BIN"
-ETC_CONF="/etc/default/$BIN.conf"
+ETC_CONF="/etc/default/$BIN"
 UPSTART_CONF="/etc/init/$BIN.conf"
 
 read -p "Uninstall $BIN configuration? [y/N] "

@@ -1,7 +1,7 @@
 #!/bin/bash
 BIN="synergyc"
 TMP="/tmp/$BIN"
-ETC_CONF="/etc/default/$BIN.conf"
+ETC_CONF="/etc/default/$BIN"
 UPSTART_CONF="/etc/init/$BIN.conf"
 
 if [[ ! -f "$ETC_CONF" ]] ; then
@@ -12,7 +12,6 @@ cat <<'EOF' > "$TMP"
 SYNERGY_SERVER=127.0.0.1
 SYNERGY_PORT=24800
 EOF
-
     sudo mv "$TMP" "$ETC_CONF"
     sudo "${EDITOR:-vi}" "$ETC_CONF"
 fi
@@ -30,7 +29,7 @@ fi
 
 # Copy the service configuration to accommodate split /home and / partitions
 # (No symlinks)
-sudo cp "$BIN.conf $UPSTART_CONF"
+sudo cp "$BIN.conf" "$UPSTART_CONF"
 
 # Reload upstart configuration, so it knows about the service we changed
 sudo initctl reload-configuration
@@ -42,11 +41,12 @@ then
     read -p "Restart $BIN? [y/N] "
     if [[ $REPLY =~ ^Y$|^y$ ]] ; then
         sudo service $BIN stop
-        # Start the new service
-        sudo service $BIN start
     else
         exit 1
     fi
 fi
+
+# Start the new service
+sudo service $BIN start
 
 exit 0
