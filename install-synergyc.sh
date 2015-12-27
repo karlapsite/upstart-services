@@ -1,8 +1,11 @@
 #!/bin/bash
-SYNERGYC='/etc/init/synergyc.conf'
+BIN="synergyc"
+TMP="/tmp/$BIN"
+ETC_CONF="/etc/default/$BIN.conf"
+UPSTART_CONF="/etc/init/$BIN.conf"
 
-if [[ ! -f /etc/default/synergy ]] ; then
-cat <<'EOF' > /tmp/synergyc
+if [[ ! -f "$ETC_CONF" ]] ; then
+cat <<'EOF' > "$TMP"
 # The server address is of the form: [<hostname>][:<port>].  The hostname
 # must be the address or hostname of the server.  The port overrides the
 # default port, 24800.
@@ -10,38 +13,37 @@ SYNERGY_SERVER=127.0.0.1
 SYNERGY_PORT=24800
 EOF
 
-    sudo mv /tmp/synergyc/etc/default/synergyc
-    sudo "${EDITOR:-vi}" /etc/default/synergyc
+    sudo mv "$TMP" "$ETC_CONF"
+    sudo "${EDITOR:-vi}" "$ETC_CONF"
 fi
 
 # Check to see if the configuration already exists
-if [[ -e "$SYNERGYC" ]] ; then
-    echo "The 'synergy.conf' service config is already installed."
+if [[ -e "$UPSTART_CONF" ]] ; then
+    echo "The service config is already installed at $UPSTART_CONF."
     read -p "Overwrite the service configuration? [Y/n] "
     if [[ $REPLY =~ ^N$|^n$ ]] ; then
         exit 1
     else
-        sudo rm -f "$SYNERGYC"
+        sudo rm -f "$UPSTART_CONF"
     fi
 fi
 
-# Create a symbolic link
-# sudo ln -s `pwd`/synergy.conf /etc/init/synergy.conf
-# Actually... just copy it because that's how I set up other PC's with split /home and / partitions
-sudo cp synergyc.conf            "$SYNERGYC"
+# Copy the service configuration to accommodate split /home and / partitions
+# (No symlinks)
+sudo cp "$BIN.conf $UPSTART_CONF"
 
-# Reload upstart configuration, so it knows about the services we added
+# Reload upstart configuration, so it knows about the service we changed
 sudo initctl reload-configuration
 
-# Check to see if synergy is already running
-if P=$(pgrep synergyc)
+# Check to see if the service is already running
+if P=$(pgrep "$BIN")
 then
-    echo "A service named synergyc is already running"
-    read -p "Restart synergy? [y/N] "
+    echo "A service named $BIN is already running"
+    read -p "Restart $BIN? [y/N] "
     if [[ $REPLY =~ ^Y$|^y$ ]] ; then
-        sudo service synergyc stop
+        sudo service $BIN stop
         # Start the new service
-        sudo service synergyc start
+        sudo service $BIN start
     else
         exit 1
     fi
