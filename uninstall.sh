@@ -1,4 +1,21 @@
 #!/bin/bash
+
+# Used to borrow cleanup scripts with identical configurations, but
+# different BIN's
+function borrow() {
+if [[ -z $1 ]]; then
+    echo "'borrow' requires a filename"
+    exit 1
+fi
+if [[ ! -f "cleanup/$1" ]]; then
+    echo "cleanup/$1 missing!"
+    exit 1
+fi
+
+. "cleanup/$1"
+}
+
+# Start Script
 if [[ -z $1 ]]; then 
     echo "Script requires the name of the service you're trying to install (e.g. synergyc)"
     exit 1

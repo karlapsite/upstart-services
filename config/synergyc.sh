@@ -10,7 +10,7 @@ TMP="/tmp/$BIN"
 ETC_CONF="/etc/default/$BIN"
 
 if [[ ! -f "$ETC_CONF" ]]; then
-cat <<'EOF' > "$TMP"
+cat <<EOF > "$TMP"
 # The server address is of the form: [<hostname>][:<port>].  The hostname
 # must be the address or hostname of the server.  The port overrides the
 # default port, 24800.

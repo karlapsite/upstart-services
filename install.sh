@@ -1,5 +1,22 @@
 #!/bin/bash
-if [[ -z $1 ]]; then 
+
+# Used to borrow configuration scripts with identical configurations, but
+# different BIN's
+function borrow() {
+if [[ -z $1 ]]; then
+    echo "'borrow' requires a filename"
+    exit 1
+fi
+if [[ ! -f "config/$1" ]]; then
+    echo "config/$1 missing!"
+    exit 1
+fi
+
+. "config/$1"
+}
+
+# Script start
+if [[ -z $1 ]]; then
     echo "Script requires the name of the service you're trying to install (e.g. synergyc)"
     exit 1
 fi
